@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 
-public class QuizActivity extends AppCompatActivity {
+public class QuizActivity extends AppCompatActivity implements View.OnClickListener {
 
     private final static String QUESTIONS_ARRAY_KEY = "questionsArrayKey";
     private final static String CURRENT_QUESTION = "currentQuestion";
@@ -28,6 +28,7 @@ public class QuizActivity extends AppCompatActivity {
     HashMap<Integer, RadioGroup> rgHmap;
     HashMap<Integer, TextView> questionHmap;
     HashMap<Integer, TextView> submitHmap;
+    TextView result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +75,7 @@ public class QuizActivity extends AppCompatActivity {
         final TextView submit5 = (TextView) findViewById(R.id.tv_submit_5);
 
         // Result
-        final TextView result = (TextView) findViewById(R.id.tv_result);
+        result = (TextView) findViewById(R.id.tv_result);
 
         rgHmap = new HashMap<Integer, RadioGroup>();
         rgHmap.put(0, rg1);
@@ -173,58 +174,39 @@ public class QuizActivity extends AppCompatActivity {
         ans5_2.setText(questions.get(4).getAnswer2());
         ans5_3.setText(questions.get(4).getAnswer3());
 
-        // Question 1 submit
-        if (submit1 != null) {
-            // Set a click listener on that View
-            submit1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    submit(0);
-                }
-            });
-        }
+        // Set a click listeners on submit buttons
+        if (submit1 != null) submit1.setOnClickListener(this);
+        if (submit2 != null) submit2.setOnClickListener(this);
+        if (submit3 != null) submit3.setOnClickListener(this);
+        if (submit4 != null) submit4.setOnClickListener(this);
+        if (submit5 != null) submit5.setOnClickListener(this);
+    }
 
-        // Question 2 submit
-        if (submit2 != null) {
-            // Set a click listener on that View
-            submit2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                   submit(1);
-                }
-            });
-        }
-        // Question 3 submit
-        if (submit3 != null) {
-            // Set a click listener on that View
-            submit3.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    submit(2);
-                }
-            });
-        }
-        // Question 4 submit
-        if (submit4 != null) {
-            // Set a click listener on that View
-            submit4.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    submit(3);
-                }
-            });
-        }
-        // Question 5 submit
-        if (submit5 != null) {
-            // Set a click listener on that View
-            submit5.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    submit(4);
-                        score = score / 5 * 100;
-                        result.setText("Your score is: " + (int) score + "%");
-                }
-            });
+    @Override
+    public void onClick(View v){
+        switch(v.getId()){
+            case R.id.tv_submit_1:{
+                submit(0);
+                break;
+            }
+            case R.id.tv_submit_2:{
+                submit(1);
+                break;
+            }
+            case R.id.tv_submit_3:{
+                submit(2);
+                break;
+            }
+            case R.id.tv_submit_4: {
+                submit(3);
+                break;
+            }
+            case R.id.tv_submit_5: {
+                submit(4);
+                score = score / 5 * 100;
+                result.setText("Your score is: " + (int) score + "%");
+                break;
+            }
         }
     }
 
