@@ -112,20 +112,11 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
             Collections.shuffle(allQuestions);
             questions = new ArrayList<QuizQuestion>(allQuestions.subList(0,5));
             currentQuestion = 0;
-            question2.setVisibility(View.INVISIBLE);
-            rg2.setVisibility(View.INVISIBLE);
-            submit2.setVisibility(View.INVISIBLE);
-            question3.setVisibility(View.INVISIBLE);
-            rg3.setVisibility(View.INVISIBLE);
-            submit3.setVisibility(View.INVISIBLE);
-            question4.setVisibility(View.INVISIBLE);
-            rg4.setVisibility(View.INVISIBLE);
-            submit4.setVisibility(View.INVISIBLE);
-            question5.setVisibility(View.INVISIBLE);
-            rg5.setVisibility(View.INVISIBLE);
-            submit5.setVisibility(View.INVISIBLE);
-            //int index = new Random().nextInt(questions.size());
-            //QuizQuestion currQuestion = questions.remove(index);
+            for(int i = 1 ; i<questions.size() ; i++){
+                rgHmap.get(i).setVisibility(View.INVISIBLE);
+                questionHmap.get(i).setVisibility(View.INVISIBLE);
+                submitHmap.get(i).setVisibility(View.INVISIBLE);
+            }
         } else {
             questions = savedInstanceState.getParcelableArrayList(QUESTIONS_ARRAY_KEY);
             currentQuestion = savedInstanceState.getInt(CURRENT_QUESTION);
@@ -141,7 +132,7 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
                 }
 
             }
-            for(int i = currentQuestion+1 ; i<5 ; i++){
+            for(int i = currentQuestion+1 ; i<questions.size() ; i++){
                 rgHmap.get(i).setVisibility(View.INVISIBLE);
                 questionHmap.get(i).setVisibility(View.INVISIBLE);
                 submitHmap.get(i).setVisibility(View.INVISIBLE);
@@ -149,31 +140,15 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         // Display questions and answers
-        question1.setText(questions.get(0).getQuestion());
-        ans1_1.setText(questions.get(0).getAnswer1());
-        ans1_2.setText(questions.get(0).getAnswer2());
-        ans1_3.setText(questions.get(0).getAnswer3());
-
-        question2.setText(questions.get(1).getQuestion());
-        ans2_1.setText(questions.get(1).getAnswer1());
-        ans2_2.setText(questions.get(1).getAnswer2());
-        ans2_3.setText(questions.get(1).getAnswer3());
-
-        question3.setText(questions.get(2).getQuestion());
-        ans3_1.setText(questions.get(2).getAnswer1());
-        ans3_2.setText(questions.get(2).getAnswer2());
-        ans3_3.setText(questions.get(2).getAnswer3());
-
-        question4.setText(questions.get(3).getQuestion());
-        ans4_1.setText(questions.get(3).getAnswer1());
-        ans4_2.setText(questions.get(3).getAnswer2());
-        ans4_3.setText(questions.get(3).getAnswer3());
-
-        question5.setText(questions.get(4).getQuestion());
-        ans5_1.setText(questions.get(4).getAnswer1());
-        ans5_2.setText(questions.get(4).getAnswer2());
-        ans5_3.setText(questions.get(4).getAnswer3());
-
+        for(int j = 0; j< questions.size(); j++){
+            questionHmap.get(j).setText(questions.get(j).getQuestion());
+            RadioButton option1 = (RadioButton) rgHmap.get(j).getChildAt(1);
+            RadioButton option2 = (RadioButton) rgHmap.get(j).getChildAt(2);
+            RadioButton option3 = (RadioButton) rgHmap.get(j).getChildAt(3);
+            option1.setText(questions.get(j).getAnswer1());
+            option2.setText(questions.get(j).getAnswer2());
+            option3.setText(questions.get(j).getAnswer3());
+        }
         // Set a click listeners on submit buttons
         if (submit1 != null) submit1.setOnClickListener(this);
         if (submit2 != null) submit2.setOnClickListener(this);
@@ -253,7 +228,6 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
         params.setMargins(16, 0, 0, 0);
         selectedAnswer.setLayoutParams(params);
         selectedAnswer.setPadding(16, 0, 0, 0);
-
     }
 
     // invoked when the activity may be temporarily destroyed, save the instance state here
