@@ -117,11 +117,11 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
                     rgHmap.get(j).getChildAt(i).setEnabled(false);
                 }
                 correctAnswerCheck(rgHmap.get(j), j);
+                submitHmap.get(j).setEnabled(false);
                 if(wrongAnswers.get(j) != 0){
                     RadioButton selectedAnswer = findViewById(wrongAnswers.get(j));
                     selectedAnswer.setButtonDrawable(R.drawable.ic_cancel);
                 }
-
             }
             for(int i = currentQuestion+1 ; i<questions.size() ; i++){
                 rgHmap.get(i).setVisibility(View.INVISIBLE);
@@ -154,7 +154,6 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
         switch(v.getId()){
             case R.id.tv_submit_1: case R.id.tv_submit_2: case R.id.tv_submit_3: case R.id.tv_submit_4:{
                 submit(currentQuestion);
-                currentQuestion++;
                 break;
             }
             case R.id.tv_submit_5: {
@@ -191,6 +190,7 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
                 submitHmap.get(numberOfQuestion).setVisibility(View.VISIBLE);
             }
         }
+        currentQuestion++;
     }
 
     public void correctAnswerCheck(RadioGroup rg, int numberOfQuestion) {
