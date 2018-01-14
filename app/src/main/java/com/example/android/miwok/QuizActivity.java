@@ -25,6 +25,9 @@ public class QuizActivity extends AppCompatActivity {
     ArrayList<QuizQuestion> questions;
     int currentQuestion;
     ArrayList<Integer> wrongAnswers = new ArrayList<Integer>();
+    HashMap<Integer, RadioGroup> rgHmap;
+    HashMap<Integer, TextView> questionHmap;
+    HashMap<Integer, TextView> submitHmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,34 +76,21 @@ public class QuizActivity extends AppCompatActivity {
         // Result
         final TextView result = (TextView) findViewById(R.id.tv_result);
 
-        // get questions ArrayList on load if it exists
-
-        allQuestions.add(new QuizQuestion(R.string.question1, R.string.answer1_1, R.string.answer1_2, R.string.answer1_3, 2));
-        allQuestions.add(new QuizQuestion(R.string.question2, R.string.answer2_1, R.string.answer2_2, R.string.answer2_3, 3));
-        allQuestions.add(new QuizQuestion(R.string.question3, R.string.answer3_1, R.string.answer3_2, R.string.answer3_3, 2));
-        allQuestions.add(new QuizQuestion(R.string.question4, R.string.answer4_1, R.string.answer4_2, R.string.answer4_3, 1));
-        allQuestions.add(new QuizQuestion(R.string.question5, R.string.answer5_1, R.string.answer5_2, R.string.answer5_3, 2));
-        allQuestions.add(new QuizQuestion(R.string.question6, R.string.answer6_1, R.string.answer6_2, R.string.answer6_3, 1));
-        allQuestions.add(new QuizQuestion(R.string.question7, R.string.answer7_1, R.string.answer7_2, R.string.answer7_3, 2 ));
-        allQuestions.add(new QuizQuestion(R.string.question8, R.string.answer8_1, R.string.answer8_2, R.string.answer8_3, 3));
-        allQuestions.add(new QuizQuestion(R.string.question9, R.string.answer9_1, R.string.answer9_2, R.string.answer9_3, 3));
-        // Randomized questions
-        Collections.shuffle(allQuestions);
-        HashMap<Integer, RadioGroup> rgHmap = new HashMap<Integer, RadioGroup>();
+        rgHmap = new HashMap<Integer, RadioGroup>();
         rgHmap.put(0, rg1);
         rgHmap.put(1, rg2);
         rgHmap.put(2, rg3);
         rgHmap.put(3, rg4);
         rgHmap.put(4, rg5);
 
-        HashMap<Integer, TextView> questionHmap = new HashMap<Integer, TextView>();
+        questionHmap = new HashMap<Integer, TextView>();
         questionHmap.put(0,question1);
         questionHmap.put(1,question2);
         questionHmap.put(2,question3);
         questionHmap.put(3,question4);
         questionHmap.put(4,question5);
 
-        HashMap<Integer, TextView> submitHmap = new HashMap<Integer, TextView>();
+        submitHmap = new HashMap<Integer, TextView>();
         submitHmap.put(0,submit1);
         submitHmap.put(1,submit2);
         submitHmap.put(2,submit3);
@@ -108,6 +98,17 @@ public class QuizActivity extends AppCompatActivity {
         submitHmap.put(4,submit5);
 
         if (savedInstanceState == null) {
+            allQuestions.add(new QuizQuestion(R.string.question1, R.string.answer1_1, R.string.answer1_2, R.string.answer1_3, 2));
+            allQuestions.add(new QuizQuestion(R.string.question2, R.string.answer2_1, R.string.answer2_2, R.string.answer2_3, 3));
+            allQuestions.add(new QuizQuestion(R.string.question3, R.string.answer3_1, R.string.answer3_2, R.string.answer3_3, 2));
+            allQuestions.add(new QuizQuestion(R.string.question4, R.string.answer4_1, R.string.answer4_2, R.string.answer4_3, 1));
+            allQuestions.add(new QuizQuestion(R.string.question5, R.string.answer5_1, R.string.answer5_2, R.string.answer5_3, 2));
+            allQuestions.add(new QuizQuestion(R.string.question6, R.string.answer6_1, R.string.answer6_2, R.string.answer6_3, 1));
+            allQuestions.add(new QuizQuestion(R.string.question7, R.string.answer7_1, R.string.answer7_2, R.string.answer7_3, 2 ));
+            allQuestions.add(new QuizQuestion(R.string.question8, R.string.answer8_1, R.string.answer8_2, R.string.answer8_3, 3));
+            allQuestions.add(new QuizQuestion(R.string.question9, R.string.answer9_1, R.string.answer9_2, R.string.answer9_3, 3));
+            // Randomized questions
+            Collections.shuffle(allQuestions);
             questions = new ArrayList<QuizQuestion>(allQuestions.subList(0,5));
             currentQuestion = 0;
             question2.setVisibility(View.INVISIBLE);
@@ -178,26 +179,7 @@ public class QuizActivity extends AppCompatActivity {
             submit1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (rg1.getCheckedRadioButtonId() == -1) {
-                        Toast.makeText(getBaseContext(), "Select answer!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        int selectedRadioButtonID = rg1.indexOfChild(findViewById(rg1.getCheckedRadioButtonId()));
-                        correctAnswerCheck(rg1, 0);
-                        if (questions.get(0).getCorrectAnswer() != selectedRadioButtonID) {
-                            incorrectAnswerCheck(rg1);
-                            wrongAnswers.add(rg1.getCheckedRadioButtonId());
-                        } else {
-                            score++;
-                            wrongAnswers.add(0);
-                        }
-                        for (int i = 0; i < rg1.getChildCount(); i++) {
-                            rg1.getChildAt(i).setEnabled(false);
-                        }
-                        question2.setVisibility(View.VISIBLE);
-                        rg2.setVisibility(View.VISIBLE);
-                        submit2.setVisibility(View.VISIBLE);
-                        currentQuestion = 1;
-                    }
+                    submit(0);
                 }
             });
         }
@@ -208,27 +190,7 @@ public class QuizActivity extends AppCompatActivity {
             submit2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (rg2.getCheckedRadioButtonId() == -1) {
-                        Toast.makeText(getBaseContext(), "Select answer!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        int selectedRadioButtonID = rg2.indexOfChild(findViewById(rg2.getCheckedRadioButtonId()));
-                        correctAnswerCheck(rg2, 1);
-
-                        if (questions.get(1).getCorrectAnswer() != selectedRadioButtonID) {
-                            incorrectAnswerCheck(rg2);
-                            wrongAnswers.add(rg2.getCheckedRadioButtonId());
-                        } else {
-                            score++;
-                            wrongAnswers.add(0);
-                        }
-                        for (int i = 0; i < rg2.getChildCount(); i++) {
-                            rg2.getChildAt(i).setEnabled(false);
-                        }
-                        question3.setVisibility(View.VISIBLE);
-                        rg3.setVisibility(View.VISIBLE);
-                        submit3.setVisibility(View.VISIBLE);
-                        currentQuestion = 2;
-                    }
+                   submit(1);
                 }
             });
         }
@@ -238,27 +200,7 @@ public class QuizActivity extends AppCompatActivity {
             submit3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (rg3.getCheckedRadioButtonId() == -1) {
-                        Toast.makeText(getBaseContext(), "Select answer!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        int selectedRadioButtonID = rg3.indexOfChild(findViewById(rg3.getCheckedRadioButtonId()));
-                        correctAnswerCheck(rg3, 2);
-
-                        if (questions.get(2).getCorrectAnswer() != selectedRadioButtonID) {
-                            incorrectAnswerCheck(rg3);
-                            wrongAnswers.add(rg3.getCheckedRadioButtonId());
-                        } else {
-                            score++;
-                            wrongAnswers.add(0);
-                        }
-                        for (int i = 0; i < rg3.getChildCount(); i++) {
-                            rg3.getChildAt(i).setEnabled(false);
-                        }
-                        question4.setVisibility(View.VISIBLE);
-                        rg4.setVisibility(View.VISIBLE);
-                        submit4.setVisibility(View.VISIBLE);
-                        currentQuestion = 3;
-                    }
+                    submit(2);
                 }
             });
         }
@@ -268,27 +210,7 @@ public class QuizActivity extends AppCompatActivity {
             submit4.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (rg4.getCheckedRadioButtonId() == -1) {
-                        Toast.makeText(getBaseContext(), "Select answer!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        int selectedRadioButtonID = rg4.indexOfChild(findViewById(rg4.getCheckedRadioButtonId()));
-                        correctAnswerCheck(rg4, 3);
-
-                        if (questions.get(3).getCorrectAnswer() != selectedRadioButtonID) {
-                            incorrectAnswerCheck(rg4);
-                            wrongAnswers.add(rg4.getCheckedRadioButtonId());
-                        } else {
-                            score++;
-                            wrongAnswers.add(0);
-                        }
-                        for (int i = 0; i < rg4.getChildCount(); i++) {
-                            rg4.getChildAt(i).setEnabled(false);
-                        }
-                        question5.setVisibility(View.VISIBLE);
-                        rg5.setVisibility(View.VISIBLE);
-                        submit5.setVisibility(View.VISIBLE);
-                        currentQuestion = 4;
-                    }
+                    submit(3);
                 }
             });
         }
@@ -298,28 +220,36 @@ public class QuizActivity extends AppCompatActivity {
             submit5.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (rg5.getCheckedRadioButtonId() == -1) {
-                        Toast.makeText(getBaseContext(), "Select answer!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        int selectedRadioButtonID = rg5.indexOfChild(findViewById(rg5.getCheckedRadioButtonId()));
-                        correctAnswerCheck(rg5, 4);
-
-                        if (questions.get(4).getCorrectAnswer() != selectedRadioButtonID) {
-                            incorrectAnswerCheck(rg5);
-                            wrongAnswers.add(rg5.getCheckedRadioButtonId());
-                        } else {
-                            score++;
-                            wrongAnswers.add(0);
-                        }
-                        for (int i = 0; i < rg5.getChildCount(); i++) {
-                            rg5.getChildAt(i).setEnabled(false);
-                        }
-
+                    submit(4);
                         score = score / 5 * 100;
                         result.setText("Your score is: " + (int) score + "%");
-                    }
                 }
             });
+        }
+    }
+
+    public void submit(int currentQuestion) {
+        if (rgHmap.get(currentQuestion).getCheckedRadioButtonId() == -1) {
+            Toast.makeText(getBaseContext(), "Select answer!", Toast.LENGTH_SHORT).show();
+        } else {
+            int selectedRadioButtonID = rgHmap.get(currentQuestion).indexOfChild(findViewById(rgHmap.get(currentQuestion).getCheckedRadioButtonId()));
+            correctAnswerCheck(rgHmap.get(currentQuestion), currentQuestion);
+            if (questions.get(currentQuestion).getCorrectAnswer() != selectedRadioButtonID) {
+                incorrectAnswerCheck(rgHmap.get(currentQuestion));
+                wrongAnswers.add(rgHmap.get(currentQuestion).getCheckedRadioButtonId());
+            } else {
+                score++;
+                wrongAnswers.add(currentQuestion);
+            }
+            for (int i = 0; i < rgHmap.get(currentQuestion).getChildCount(); i++) {
+                rgHmap.get(currentQuestion).getChildAt(i).setEnabled(false);
+            }
+            currentQuestion++;
+            if(currentQuestion<questions.size()){
+                questionHmap.get(currentQuestion).setVisibility(View.VISIBLE);
+                rgHmap.get(currentQuestion).setVisibility(View.VISIBLE);
+                submitHmap.get(currentQuestion).setVisibility(View.VISIBLE);
+            }
         }
     }
 
