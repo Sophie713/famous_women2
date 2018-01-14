@@ -20,60 +20,45 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
     private final static String QUESTIONS_ARRAY_KEY = "questionsArrayKey";
     private final static String CURRENT_QUESTION = "currentQuestion";
     private final static String WRONG_ANSWERS = "wrongQuestions";
-    float score = 0;
+    private final static String SCORE = "score";
+    private final static String IS_RESULT_SHOWN = "isResultShown";
+    float score;
     ArrayList<QuizQuestion> allQuestions = new ArrayList<QuizQuestion>();    // ArrayList of all quiz questions
     ArrayList<QuizQuestion> questions;
     int currentQuestion;
     ArrayList<Integer> wrongAnswers = new ArrayList<Integer>();
     HashMap<Integer, RadioGroup> rgHmap;
-    HashMap<Integer, TextView> questionHmap;
-    HashMap<Integer, TextView> submitHmap;
+    HashMap<Integer, TextView> questionHmap, submitHmap;
     TextView result;
+    boolean isResultShown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz); // Temporary -> use array adapt or show 5 questions by default?
-
         // this is for the arrow in the menu bar to go back to parent activity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // Find views
         // Question 1
-        final TextView question1 = (TextView) findViewById(R.id.tv_question1);
-        final RadioGroup rg1 = (RadioGroup) findViewById(R.id.rg_question1);
-        final TextView ans1_1 = (TextView) findViewById(R.id.rb_answer1_1);
-        final TextView ans1_2 = (TextView) findViewById(R.id.rb_answer1_2);
-        final TextView ans1_3 = (TextView) findViewById(R.id.rb_answer1_3);
-        final TextView submit1 = (TextView) findViewById(R.id.tv_submit_1);
+        final TextView question1 = findViewById(R.id.tv_question1);
+        final RadioGroup rg1 = findViewById(R.id.rg_question1);
+        final TextView submit1 = findViewById(R.id.tv_submit_1);
         // Question 2
-        final TextView question2 = (TextView) findViewById(R.id.tv_question2);
-        final RadioGroup rg2 = (RadioGroup) findViewById(R.id.rg_question2);
-        final TextView ans2_1 = (TextView) findViewById(R.id.rb_answer2_1);
-        final TextView ans2_2 = (TextView) findViewById(R.id.rb_answer2_2);
-        final TextView ans2_3 = (TextView) findViewById(R.id.rb_answer2_3);
-        final TextView submit2 = (TextView) findViewById(R.id.tv_submit_2);
+        final TextView question2 = findViewById(R.id.tv_question2);
+        final RadioGroup rg2 = findViewById(R.id.rg_question2);
+        final TextView submit2 =  findViewById(R.id.tv_submit_2);
         // Question 3
-        final TextView question3 = (TextView) findViewById(R.id.tv_question3);
-        final RadioGroup rg3 = (RadioGroup) findViewById(R.id.rg_question3);
-        final TextView ans3_1 = (TextView) findViewById(R.id.rb_answer3_1);
-        final TextView ans3_2 = (TextView) findViewById(R.id.rb_answer3_2);
-        final TextView ans3_3 = (TextView) findViewById(R.id.rb_answer3_3);
-        final TextView submit3 = (TextView) findViewById(R.id.tv_submit_3);
+        final TextView question3 = findViewById(R.id.tv_question3);
+        final RadioGroup rg3 =  findViewById(R.id.rg_question3);
+        final TextView submit3 = findViewById(R.id.tv_submit_3);
         // Question 4
-        final TextView question4 = (TextView) findViewById(R.id.tv_question4);
-        final RadioGroup rg4 = (RadioGroup) findViewById(R.id.rg_question4);
-        final TextView ans4_1 = (TextView) findViewById(R.id.rb_answer4_1);
-        final TextView ans4_2 = (TextView) findViewById(R.id.rb_answer4_2);
-        final TextView ans4_3 = (TextView) findViewById(R.id.rb_answer4_3);
-        final TextView submit4 = (TextView) findViewById(R.id.tv_submit_4);
+        final TextView question4 = findViewById(R.id.tv_question4);
+        final RadioGroup rg4 = findViewById(R.id.rg_question4);
+        final TextView submit4 = findViewById(R.id.tv_submit_4);
         // Question 5
-        final TextView question5 = (TextView) findViewById(R.id.tv_question5);
-        final RadioGroup rg5 = (RadioGroup) findViewById(R.id.rg_question5);
-        final TextView ans5_1 = (TextView) findViewById(R.id.rb_answer5_1);
-        final TextView ans5_2 = (TextView) findViewById(R.id.rb_answer5_2);
-        final TextView ans5_3 = (TextView) findViewById(R.id.rb_answer5_3);
-        final TextView submit5 = (TextView) findViewById(R.id.tv_submit_5);
-
+        final TextView question5 = findViewById(R.id.tv_question5);
+        final RadioGroup rg5 = findViewById(R.id.rg_question5);
+        final TextView submit5 = findViewById(R.id.tv_submit_5);
         // Result
         result = (TextView) findViewById(R.id.tv_result);
 
@@ -112,6 +97,8 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
             Collections.shuffle(allQuestions);
             questions = new ArrayList<QuizQuestion>(allQuestions.subList(0,5));
             currentQuestion = 0;
+            score = 0;
+            isResultShown = false;
             for(int i = 1 ; i<questions.size() ; i++){
                 rgHmap.get(i).setVisibility(View.INVISIBLE);
                 questionHmap.get(i).setVisibility(View.INVISIBLE);
@@ -121,6 +108,8 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
             questions = savedInstanceState.getParcelableArrayList(QUESTIONS_ARRAY_KEY);
             currentQuestion = savedInstanceState.getInt(CURRENT_QUESTION);
             wrongAnswers = (ArrayList<Integer>)savedInstanceState.getSerializable(WRONG_ANSWERS);
+            score = savedInstanceState.getFloat(SCORE);
+            isResultShown = savedInstanceState.getBoolean(IS_RESULT_SHOWN);
             for(int j = 0; j < currentQuestion ; j++){
                 for (int i = 0; i < rgHmap.get(j).getChildCount(); i++) {
                     rgHmap.get(j).getChildAt(i).setEnabled(false);
@@ -137,6 +126,7 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
                 questionHmap.get(i).setVisibility(View.INVISIBLE);
                 submitHmap.get(i).setVisibility(View.INVISIBLE);
             }
+            if(isResultShown) result.setText("Your score is: " + (int) score + "%");
         }
 
         // Display questions and answers
@@ -160,52 +150,42 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v){
         switch(v.getId()){
-            case R.id.tv_submit_1:{
-                submit(0);
-                break;
-            }
-            case R.id.tv_submit_2:{
-                submit(1);
-                break;
-            }
-            case R.id.tv_submit_3:{
-                submit(2);
-                break;
-            }
-            case R.id.tv_submit_4: {
-                submit(3);
+            case R.id.tv_submit_1: case R.id.tv_submit_2: case R.id.tv_submit_3: case R.id.tv_submit_4:{
+                submit(currentQuestion);
+                currentQuestion++;
                 break;
             }
             case R.id.tv_submit_5: {
-                submit(4);
+                submit(currentQuestion);
                 score = score / 5 * 100;
                 result.setText("Your score is: " + (int) score + "%");
+                isResultShown = true;
                 break;
             }
         }
     }
 
-    public void submit(int currentQuestion) {
-        if (rgHmap.get(currentQuestion).getCheckedRadioButtonId() == -1) {
+    public void submit(int numberOfQuestion) {
+        if (rgHmap.get(numberOfQuestion).getCheckedRadioButtonId() == -1) {
             Toast.makeText(getBaseContext(), "Select answer!", Toast.LENGTH_SHORT).show();
         } else {
-            int selectedRadioButtonID = rgHmap.get(currentQuestion).indexOfChild(findViewById(rgHmap.get(currentQuestion).getCheckedRadioButtonId()));
-            correctAnswerCheck(rgHmap.get(currentQuestion), currentQuestion);
-            if (questions.get(currentQuestion).getCorrectAnswer() != selectedRadioButtonID) {
-                incorrectAnswerCheck(rgHmap.get(currentQuestion));
-                wrongAnswers.add(rgHmap.get(currentQuestion).getCheckedRadioButtonId());
+            int selectedRadioButtonID = rgHmap.get(numberOfQuestion).indexOfChild(findViewById(rgHmap.get(numberOfQuestion).getCheckedRadioButtonId()));
+            correctAnswerCheck(rgHmap.get(numberOfQuestion), numberOfQuestion);
+            if (questions.get(numberOfQuestion).getCorrectAnswer() != selectedRadioButtonID) {
+                incorrectAnswerCheck(rgHmap.get(numberOfQuestion));
+                wrongAnswers.add(rgHmap.get(numberOfQuestion).getCheckedRadioButtonId());
             } else {
                 score++;
-                wrongAnswers.add(currentQuestion);
+                wrongAnswers.add(0);
             }
-            for (int i = 0; i < rgHmap.get(currentQuestion).getChildCount(); i++) {
-                rgHmap.get(currentQuestion).getChildAt(i).setEnabled(false);
+            for (int i = 0; i < rgHmap.get(numberOfQuestion).getChildCount(); i++) {
+                rgHmap.get(numberOfQuestion).getChildAt(i).setEnabled(false);
             }
-            currentQuestion++;
-            if(currentQuestion<questions.size()){
-                questionHmap.get(currentQuestion).setVisibility(View.VISIBLE);
-                rgHmap.get(currentQuestion).setVisibility(View.VISIBLE);
-                submitHmap.get(currentQuestion).setVisibility(View.VISIBLE);
+            numberOfQuestion++;
+            if(numberOfQuestion<questions.size()){
+                questionHmap.get(numberOfQuestion).setVisibility(View.VISIBLE);
+                rgHmap.get(numberOfQuestion).setVisibility(View.VISIBLE);
+                submitHmap.get(numberOfQuestion).setVisibility(View.VISIBLE);
             }
         }
     }
@@ -217,7 +197,6 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
         params1.setMargins(16, 0, 0, 0);
         correctAnswer.setLayoutParams(params1);
         correctAnswer.setPadding(16, 0, 0, 0);
-
     }
 
     public void incorrectAnswerCheck(RadioGroup rg) {
@@ -237,6 +216,8 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
         outState.putParcelableArrayList(QUESTIONS_ARRAY_KEY, questions);
         outState.putInt(CURRENT_QUESTION, currentQuestion);
         outState.putSerializable(WRONG_ANSWERS, wrongAnswers);
+        outState.putFloat(SCORE, score);
+        outState.putBoolean(IS_RESULT_SHOWN, isResultShown);
         // call superclass to save any view hierarchy
         super.onSaveInstanceState(outState);
     }
