@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -28,7 +29,8 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
     int currentQuestion;
     ArrayList<Integer> wrongAnswers = new ArrayList<Integer>();
     HashMap<Integer, RadioGroup> rgHmap;
-    HashMap<Integer, TextView> questionHmap, submitHmap;
+    HashMap<Integer, TextView> questionHmap;
+    HashMap<Integer, Button> submitHmap;
     TextView result;
     boolean isResultShown;
 
@@ -42,25 +44,25 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
         // Question 1
         final TextView question1 = findViewById(R.id.tv_question1);
         final RadioGroup rg1 = findViewById(R.id.rg_question1);
-        final TextView submit1 = findViewById(R.id.tv_submit_1);
+        final Button submit1 = findViewById(R.id.tv_submit_1);
         // Question 2
         final TextView question2 = findViewById(R.id.tv_question2);
         final RadioGroup rg2 = findViewById(R.id.rg_question2);
-        final TextView submit2 =  findViewById(R.id.tv_submit_2);
+        final Button submit2 =  findViewById(R.id.tv_submit_2);
         // Question 3
         final TextView question3 = findViewById(R.id.tv_question3);
         final RadioGroup rg3 =  findViewById(R.id.rg_question3);
-        final TextView submit3 = findViewById(R.id.tv_submit_3);
+        final Button submit3 = findViewById(R.id.tv_submit_3);
         // Question 4
         final TextView question4 = findViewById(R.id.tv_question4);
         final RadioGroup rg4 = findViewById(R.id.rg_question4);
-        final TextView submit4 = findViewById(R.id.tv_submit_4);
+        final Button submit4 = findViewById(R.id.tv_submit_4);
         // Question 5
         final TextView question5 = findViewById(R.id.tv_question5);
         final RadioGroup rg5 = findViewById(R.id.rg_question5);
-        final TextView submit5 = findViewById(R.id.tv_submit_5);
+        final Button submit5 = findViewById(R.id.tv_submit_5);
         // Result
-        result = (TextView) findViewById(R.id.tv_result);
+        result = findViewById(R.id.tv_result);
 
         rgHmap = new HashMap<Integer, RadioGroup>();
         rgHmap.put(0, rg1);
@@ -76,7 +78,7 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
         questionHmap.put(3,question4);
         questionHmap.put(4,question5);
 
-        submitHmap = new HashMap<Integer, TextView>();
+        submitHmap = new HashMap<Integer, Button>();
         submitHmap.put(0,submit1);
         submitHmap.put(1,submit2);
         submitHmap.put(2,submit3);
@@ -181,6 +183,7 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
             for (int i = 0; i < rgHmap.get(numberOfQuestion).getChildCount(); i++) {
                 rgHmap.get(numberOfQuestion).getChildAt(i).setEnabled(false);
             }
+            submitHmap.get(numberOfQuestion).setEnabled(false);
             numberOfQuestion++;
             if(numberOfQuestion<questions.size()){
                 questionHmap.get(numberOfQuestion).setVisibility(View.VISIBLE);
